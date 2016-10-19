@@ -19,21 +19,26 @@ class HandleConnect(webapp2.RequestHandler):
 
     existing_users = ChatUser.query(ChatUser.key != chat_user.key)
     channel.send_message(chat_user.key.string_id(),
-                         'Welcome, %s! Other chatters: %d' %
-                         (chat_user.nickname, existing_users.count()))
+        'Welcome, %s! Other chatters: %d' % (chat_user.nickname,
+          existing_users.count()))
+    message = '%s joined. Total users: %d' % (chat_user.nickname,
+        existing_users.count() + 1)
     for existing_user in existing_users:
-      channel.send_message(existing_user.key.string_id(),
-                           '%s joined' % chat_user.nickname)
+      channel.send_message( existing_user.key.string_id(), message)
 
 class HandleDisconnect(webapp2.RequestHandler):
   """ Deletes the user model and notifies all other users. """
   def post(self):
     user_id = self.request.get('from')
     chat_user = ChatUser.get_by_id(user_id)
+    # ndb is eventually consistent for this query so get the count first
+    users = ChatUser.query()
+    message = '%s left. Total users: %d' % (chat_user.nickname,
+        users.count() - 1)
+    # then delete the user and notify everyone
     chat_user.key.delete()
-
-    for user in ChatUser.query():
-      channel.send_message(user.key.string_id(), '%s left' % chat_user.nickname)
+    for user in users:
+      channel.send_message(user.key.string_id(), message)
 
 class HandleSend(webapp2.RequestHandler):
   """ When a user sends a message to be echoed to all other users. """
