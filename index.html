@@ -14,11 +14,11 @@
     height: 100vh;
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
   }
 
   #messages {
     overflow: auto;
+    flex: 1;
   }
 
   .message {
@@ -27,6 +27,7 @@
 </style>
 
 <div id="chat">
+  <h1>Scripted Studio Chat</h1>
   <div id="messages"></div>
   <input disabled placeholder="Connecting..." id="newmessage"></input>
 </div>
