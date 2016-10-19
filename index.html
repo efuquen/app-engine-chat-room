@@ -9,14 +9,17 @@
     font-weight: bold;
   }
 
+  #chat, #newmessageform {
+    display: flex;
+  }
+
   #chat {
     padding: 0 5px;
     height: 100vh;
-    display: flex;
     flex-direction: column;
   }
 
-  #messages {
+  #messages, #newmessage {
     overflow: auto;
     flex: 1;
   }
@@ -29,7 +32,10 @@
 <div id="chat">
   <h1>Scripted Studio Chat</h1>
   <div id="messages"></div>
-  <input disabled placeholder="Connecting..." id="newmessage"></input>
+  <form id="newmessageform">
+    <input disabled placeholder="Connecting..." id="newmessage"></input>
+    <input type="submit" value="Send"/>
+  </form>
 </div>
 
 <!-- Imports jQuery -->
@@ -60,12 +66,11 @@
   };
 channel.open(handler);
 
-// Enter-button handler, i.e. send a message.
-newmessage.on('keypress', function(e) {
-  if (e.key === 'Enter' && newmessage.val() !== '') {
-    $.post('/send', {data: newmessage.val()});
-    newmessage.val('');
-  };
+// Send a message when the newmessageform
+$('#newmessageform').on('submit', function(e) {
+  e.preventDefault();
+  $.post('/send', {data: newmessage.val()});
+  newmessage.val('');
 });
 
 // Force all focus to the input box.
