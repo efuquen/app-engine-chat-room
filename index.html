@@ -60,6 +60,8 @@
     'onmessage': function(m) {
       // Blindly append the message to the end of the element.
       messages.append('<p class="message">' + m.data + '</p>');
+      // Scroll to the bottom of messages in case of overflow.
+      messages.scrollTop(messages.prop('scrollHeight'));
     },
     'onerror': function() {}, // No-op.
     'onclose': function() {}, // No-op.
